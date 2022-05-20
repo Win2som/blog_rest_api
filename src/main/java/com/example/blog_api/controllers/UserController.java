@@ -23,7 +23,7 @@ public class UserController {
 
 
 
-    @PostMapping("/")
+    @PostMapping("/user")
     public ResponseEntity<RegDTO> registerNewUser(@RequestBody RegDTO regDto) {
         return userServices.registerNewUser(regDto);
     }

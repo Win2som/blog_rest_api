@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -77,12 +78,23 @@ class UserControllerIntegrationTest {
 
     @Test
     void getAllUsers() throws Exception {
-       List<RegDTO> regDTOList = List.of(new RegDTO());
-        when(userServices.getAllUsers())
-                .thenReturn((ResponseEntity<List<RegDTO>>) regDTOList);
+//       List<RegDTO> regDTOList = List.of(new RegDTO());
+//        when(userServices.getAllUsers())
+//                .thenReturn((ResponseEntity<List<RegDTO>>) regDTOList);
         mockMvc.perform(MockMvcRequestBuilders.get("/users"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
+
+//    @Test
+//    void getAllUsers2() throws Exception {
+//
+////        List<RegDTO> regDTOList = List.of(new RegDTO());
+////        when(userServices.getAllUsers())
+////                .thenReturn((ResponseEntity<List<RegDTO>>) regDTOList);
+//        RequestBuilder request = MockMvcRequestBuilders.get("/users");
+//        MvcResult result = mockMvc.perform(request).andReturn();
+//        assertEquals(, result.getResponse());
+//    }
 
     @Test
     void loginUser() {

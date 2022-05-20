@@ -10,8 +10,11 @@ import com.example.blog_api.models.Role;
 import com.example.blog_api.repositories.UserRepository;
 import com.example.blog_api.services.UserServices;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,6 +26,9 @@ public class UserServicesImpl implements UserServices {
 
     private final UserRepository userRepository;
     private ModelMapper mapper;
+
+    @Autowired
+    private PasswordEncoder encoder;
 
     public UserServicesImpl(UserRepository userRepository, ModelMapper mapper) {
         this.userRepository = userRepository;
@@ -49,8 +55,10 @@ public class UserServicesImpl implements UserServices {
             user = mapper.map(regDto, User.class);
             user.setDateRegistered(LocalDate.now());
             user.setRole(Role.CUSTOMER);
+            user.setPassword(encoder.encode(user.getPassword()));
 
             userRepository.save(user);
+
 
             RegDTO regDTO = mapper.map(user, RegDTO.class);
             return new ResponseEntity<>(regDTO, HttpStatus.CREATED);
@@ -67,6 +75,8 @@ public class UserServicesImpl implements UserServices {
             admin = mapper.map(regDto, User.class);
             admin.setDateRegistered(LocalDate.now());
             admin.setRole(Role.ADMIN);
+            admin.setPassword(encoder.encode(admin.getPassword()));
+
 
             userRepository.save(admin);
 
@@ -84,6 +94,7 @@ public class UserServicesImpl implements UserServices {
         if(user == null || !user.getPassword().equals(loginDTO.getPassword())) {
             throw new InvalidUserException("Could not process. Please check your email and password and try again");
         }
+
         return ResponseEntity.ok(mapper.map(user, RegDTO.class));
     }
 
@@ -92,7 +103,10 @@ public class UserServicesImpl implements UserServices {
     public ResponseEntity<RegDTO> editUser(long id, RegDTO regDto) {
         User user = userRepository.findById(id).get();
         if(user != null) {
-            user = mapper.map(regDto, User.class);
+            user.setPassword(regDto.getPassword());
+            user.setEmail(regDto.getEmail());
+            user.setLastName(regDto.getLastName());
+            user.setFirstName(regDto.getFirstName());
             userRepository.save(user);
             return ResponseEntity.ok(mapper.map(user, RegDTO.class));
         }
