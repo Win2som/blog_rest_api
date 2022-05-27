@@ -10,11 +10,9 @@ import com.example.blog_api.models.Role;
 import com.example.blog_api.repositories.UserRepository;
 import com.example.blog_api.services.UserServices;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -27,8 +25,6 @@ public class UserServicesImpl implements UserServices {
     private final UserRepository userRepository;
     private ModelMapper mapper;
 
-    @Autowired
-    private PasswordEncoder encoder;
 
     public UserServicesImpl(UserRepository userRepository, ModelMapper mapper) {
         this.userRepository = userRepository;
@@ -55,7 +51,7 @@ public class UserServicesImpl implements UserServices {
             user = mapper.map(regDto, User.class);
             user.setDateRegistered(LocalDate.now());
             user.setRole(Role.CUSTOMER);
-            user.setPassword(encoder.encode(user.getPassword()));
+            user.setPassword(user.getPassword());
 
             userRepository.save(user);
 
@@ -75,7 +71,7 @@ public class UserServicesImpl implements UserServices {
             admin = mapper.map(regDto, User.class);
             admin.setDateRegistered(LocalDate.now());
             admin.setRole(Role.ADMIN);
-            admin.setPassword(encoder.encode(admin.getPassword()));
+            admin.setPassword(admin.getPassword());
 
 
             userRepository.save(admin);
@@ -101,7 +97,7 @@ public class UserServicesImpl implements UserServices {
 
     @Override
     public ResponseEntity<RegDTO> editUser(long id, RegDTO regDto) {
-        User user = userRepository.findById(id).get();
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User with Id "+id+" does not exist"));
         if(user != null) {
             user.setPassword(regDto.getPassword());
             user.setEmail(regDto.getEmail());

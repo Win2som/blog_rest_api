@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("api/users")
 public class UserController {
 
     private final UserServices userServices;
@@ -19,9 +19,6 @@ public class UserController {
     public UserController(UserServices userServices) {
         this.userServices = userServices;
     }
-
-
-
 
     @PostMapping("/user")
     public ResponseEntity<RegDTO> registerNewUser(@RequestBody RegDTO regDto) {
